@@ -7,9 +7,15 @@ pipeline {
     }
 
     stages {
+        stage('Test GitHub Access') {
+            steps {
+                sh 'curl -I https://github.com || echo "GitHub not reachable"'
+            }
+        }
+
         stage('Clone Repo') {
             steps {
-                git 'https://github.com/avigna3001/flask-app.git'
+                git branch: 'main', url: 'https://github.com/avigna3001/flask-app.git'
             }
         }
 
@@ -31,4 +37,5 @@ pipeline {
         }
     }
 }
+
 

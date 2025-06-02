@@ -19,6 +19,12 @@ pipeline {
             }
         }
 
+        stage('Test Docker Access') {
+            steps {
+                sh 'docker version || echo "Docker not accessible from Jenkins"'
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {

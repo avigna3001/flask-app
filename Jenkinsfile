@@ -1,21 +1,34 @@
 pipeline {
-  agent any
-  stages {
-    stage('Clone') {
-      steps {
-        git 'https://github.com/your-repo'
-      }
+    agent any
+
+    environment {
+        DOCKER_HUB_CREDENTIALS = credentials('dockerhub-credentials')  
+        IMAGE_NAME = "shravani3001/flask-app"
     }
-    stage('Build') {
-      steps {
-        sh 'npm install'
-      }
+
+    stages {
+        stage('Clone Repo') {
+            steps {
+                git 'https://github.com/avigna3001/flask-app.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh "docker build -t $IMAGE_NAME ."
+                }
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                script {
+                    sh "echo $DOCKER_HUB_CREDENTIALS_PSW | docker login -u $DOCKER_HUB_CREDENTIALS_USR --password-stdin"
+                    sh "docker push $IMAGE_NAME"
+                }
+            }
+        }
     }
-    stage('Docker Build & Push') {
-      steps {
-        sh 'docker build -t yourname/app:latest .'
-        sh 'docker push yourname/app:latest'
-      }
-    }
-  }
 }
+
